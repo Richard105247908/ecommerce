@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.SecurityFilterChain;
@@ -24,20 +25,15 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/register", "/login").permitAll()
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/user/**").hasRole("USER")
-                        .requestMatchers("/products/**").authenticated()
+                        .requestMatchers("/products/**", "/actuators/**").authenticated()
                         .anyRequest().authenticated()
                 )
                 .httpBasic(Customizer.withDefaults())
-                .csrf().disable()
-                .formLogin(form -> form
-                        .loginPage("/login")
-                        .defaultSuccessUrl("/welcome", true)
-                )
+                .csrf().disable();
+                http.headers().frameOptions().disable();
                 // 5. Configure Logout
-                .logout(logout -> logout.permitAll());
+
 
         return http.build();
     }
@@ -45,21 +41,19 @@ public class SecurityConfig {
     @Bean
     public UserDetailsService userDetailsService() {
         return username -> {
-            com.example.ecommerce.models.Users user = userService.findByUsername(username);
+           Users user = userService.findByUsername(username);
             if (user == null) {
                 throw new UsernameNotFoundException("User not found");
             }
-            User.UserBuilder builder = User.withUsername(user.getUsername());
-            builder.password(user.getPassword());  // Password is already encoded
-            if(user.getRole() != null) {
-                builder.roles(user.getRole());
-            }
-            return builder.build();
+            UserDetails userDetails = org.springframework.security.core.userdetails.User.withUsername(user.getUsername())
+                    .password(user.getPassword())
+                    .roles(user.getRole())
+                    .build();
+            return userDetails;
         };
 
-
-        }
-
-
     }
+
+
+}
 
