@@ -1,7 +1,10 @@
 package com.example.ecommerce.repository;
 
-import com.example.ecommerce.models.User;
+import com.example.ecommerce.models.Users;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface UserRepository  extends JpaRepository<User,Long> {
+public interface UserRepository  extends JpaRepository<Users,Long> {
+     Users findByUsername(String username);
+
+    
 }
