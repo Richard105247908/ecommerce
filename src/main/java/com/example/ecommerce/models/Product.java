@@ -13,7 +13,7 @@ public class Product {
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private long id;
 
-    private 
+    private String name;
 
 
 }
