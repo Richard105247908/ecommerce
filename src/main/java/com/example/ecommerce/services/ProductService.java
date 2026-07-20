@@ -36,7 +36,17 @@ public class ProductService {
         return product;
     }
 
-    
+    public Product updateProduct(Long id, Product updateProduct){
+        return this.productRepository.findById(id)
+                .map(product -> {
+                    product.setName(updateProduct.getName());
+                    product.setPrice(updateProduct.getPrice());
+                    return productRepository.save(product);
+                }).orElse(null);
+
+    }
+
+
 
 
 
