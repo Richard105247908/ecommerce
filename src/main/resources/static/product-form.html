@@ -46,12 +46,10 @@
 </head>
 <body>
 
-<!-- Title changes depending on whether we're adding or editing -->
 <h1 id="form-title">Add Product</h1>
 
 <form id="product-form">
-    <!-- Hidden field: empty when adding a new product,
-         filled in with the product's id when editing an existing one -->
+
     <input type="hidden" id="productId">
 
     <label for="name">Name</label>
@@ -72,12 +70,9 @@
 <script>
     const API_URL = '/products/api';
 
-    // Read the "id" query parameter from the URL, e.g. product-form.html?id=3
     const urlParams = new URLSearchParams(window.location.search);
     const editId = urlParams.get('id');
 
-    // If there's an id in the URL, we're editing an existing product,
-    // so load its current data and fill in the form.
     if (editId) {
       document.getElementById('form-title').textContent = 'Edit Product';
       document.getElementById('productId').value = editId;
@@ -100,7 +95,6 @@
         });
     }
 
-    // Handle the form submission for both add and edit
     document.getElementById('product-form').addEventListener('submit', function (event) {
       event.preventDefault(); // stop the browser from doing a normal page reload
 

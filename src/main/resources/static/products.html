@@ -76,10 +76,8 @@
 <p id="status"></p>
 
 <script>
-    // The REST endpoint exposed by ProductRestController
     const API_URL = '/products/api';
 
-    // Runs as soon as the page finishes loading
     document.addEventListener('DOMContentLoaded', loadProducts);
 
     function loadProducts() {
@@ -120,7 +118,6 @@
     }
 
     function editProduct(id) {
-      // Send the user to the same form, but tell it which product to edit
       window.location.href = `product-form.html?id=${id}`;
     }
 
