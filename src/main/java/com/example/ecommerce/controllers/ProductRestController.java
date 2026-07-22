@@ -25,7 +25,7 @@ public class ProductRestController {
     }
 
     @PostMapping
-    public Product saveProducts(@PathVariable Product product){
+    public Product saveProducts(@RequestBody Product product){
       return  productService.addProduct(product);
     }
 
@@ -35,7 +35,7 @@ public class ProductRestController {
     }
 
     @PutMapping("/{id}")
-    public Product updateProduct(@PathVariable long id, Product updateProduct){
+    public Product updateProduct(@PathVariable long id, @RequestBody Product updateProduct){
         return productService.updateProduct(id, updateProduct);
     }
 
