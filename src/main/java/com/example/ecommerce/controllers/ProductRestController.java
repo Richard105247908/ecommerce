@@ -34,7 +34,10 @@ public class ProductRestController {
         productService.deleteProduct(id);
     }
 
-    
+    @PutMapping("/{id}")
+    public Product updateProduct(@PathVariable long id, Product updateProduct){
+        return productService.updateProduct(id, updateProduct);
+    }
 
 
 }
