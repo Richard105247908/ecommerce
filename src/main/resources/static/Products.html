@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Products</title>
+    <style>
+        body {
+          font-family: Arial, sans-serif;
+          max-width: 800px;
+          margin: 40px auto;
+          background: #f7f7f7;
+          color: #222;
+        }
+        h1 {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        }
+        table {
+          width: 100%;
+          border-collapse: collapse;
+          background: #fff;
+          box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        th, td {
+          text-align: left;
+          padding: 10px 12px;
+          border-bottom: 1px solid #e0e0e0;
+        }
+        th {
+          background: #333;
+          color: #fff;
+        }
+        button {
+          cursor: pointer;
+          border: none;
+          border-radius: 4px;
+          padding: 6px 10px;
+          margin-right: 6px;
+          font-size: 13px;
+        }
+        .edit-btn { background: #2b7de9; color: #fff; }
+        .delete-btn { background: #d9534f; color: #fff; }
+        .add-btn {
+          background: #28a745;
+          color: #fff;
+          padding: 8px 14px;
+          border-radius: 4px;
+          text-decoration: none;
+          font-size: 14px;
+        }
+        #status { color: #d9534f; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+<h1>
+    Products
+    <a class="add-btn" href="product-form.html">+ Add Product</a>
+</h1>
+
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Price</th>
+        <th>Description</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <!-- Rows get inserted here by JavaScript -->
+    <tbody id="product-table-body"></tbody>
+</table>
+
+<p id="status"></p>
+
+<script>
+    // The REST endpoint exposed by ProductRestController
+    const API_URL = '/products/api';
+
+    // Runs as soon as the page finishes loading
+    document.addEventListener('DOMContentLoaded', loadProducts);
+
+    function loadProducts() {
+      fetch(API_URL)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Server responded with status ' + response.status);
+          }
+          return response.json();
+        })
+        .then(products => renderProducts(products))
+        .catch(error => {
+          document.getElementById('status').textContent =
+            'Could not load products: ' + error.message;
+        });
+    }
+
+    function renderProducts(products) {
+      const tbody = document.getElementById('product-table-body');
+      tbody.innerHTML = ''; // clear any existing rows before redrawing
+
+      products.forEach(product => {
+        const row = document.createElement('tr');
+
+        row.innerHTML = `
+          <td>${product.id}</td>
+          <td>${product.name}</td>
+          <td>$${product.price}</td>
+          <td>${product.description}</td>
+          <td>
+            <button class="edit-btn" onclick="editProduct(${product.id})">Edit</button>
+            <button class="delete-btn" onclick="deleteProduct(${product.id})">Delete</button>
+          </td>
+        `;
+
+        tbody.appendChild(row);
+      });
+    }
+
+    function editProduct(id) {
+      // Send the user to the same form, but tell it which product to edit
+      window.location.href = `product-form.html?id=${id}`;
+    }
+
+    function deleteProduct(id) {
+      if (!confirm('Delete this product?')) {
+        return;
+      }
+
+      fetch(`${API_URL}/${id}`, { method: 'DELETE' })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Server responded with status ' + response.status);
+          }
+          loadProducts(); // refresh the table
+        })
+        .catch(error => {
+          document.getElementById('status').textContent =
+            'Could not delete product: ' + error.message;
+        });
+    }
+</script>
+
+</body>
+</html>
+
